@@ -8,7 +8,7 @@ W pliku z zestawami pytań muszą być zamieszczone pytania i odpowiedzi w forma
 >Ile zoladkow maja delfiny?  -2
 
 Aby program działał poprawnie, należy przestrzegać kilku zasad:
-- (na razie) program nie obsługuje znaków polskich,
+- (na razie) program nie obsługuje znaków polskich w systemie Windows,
 - do każdego pytania musi być załączone pytanie poprzedzone znakiem `-`. W innym wypadku program je zignoruje.
 
 Aby umieścić komentarz, należy umieścić NA POCZĄTKU linii znak `/`. Na tę chwilę program nie obsługuje następującego formatu komentarza:
