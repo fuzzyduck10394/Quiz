@@ -12,7 +12,7 @@ Aby program działał poprawnie, należy przestrzegać kilku zasad:
 - do każdego pytania musi być załączona odpowiedz poprzedzona znakiem `-`. W innym wypadku program je zignoruje.
 
 Aby wstawić komentarz, należy umieścić **na początku** linii znak `/`. Na tę chwilę program nie obsługuje następującego formatu komentarza:
->Ile żołądków mają delfiny? -2  / Źle umieszczony komentarz!
+>Ile żołądków mają delfiny? -2  */ Źle umieszczony komentarz!*
 
 Po stworzeniu pliku z zestawem pytań, należy umieścić go w katalogu `quiz` oraz wpisać jego nazwę do pliku `source.txt`.
 
