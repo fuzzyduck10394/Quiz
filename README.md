@@ -5,14 +5,14 @@ Aby korzystać z programu, w terminalu w katalogu `quiz` należy wpisać następ
 
 ### 2. Jak stworzyć swój zestaw pytań?
 W pliku z zestawami pytań muszą być zamieszczone pytania i odpowiedzi w formacie:
->Ile zoladkow maja delfiny?  -2
+>Ile żołądków mają delfiny? -2
 
 Aby program działał poprawnie, należy przestrzegać kilku zasad:
 - (na razie) program nie obsługuje znaków polskich w systemie Windows,
 - do każdego pytania musi być załączona odpowiedz poprzedzona znakiem `-`. W innym wypadku program je zignoruje.
 
 Aby wstawić komentarz, należy umieścić **na początku** linii znak `/`. Na tę chwilę program nie obsługuje następującego formatu komentarza:
->Ile zoladkow maja delfiny?      -2  / Zle umieszczony komentarz!
+>Ile żołądków mają delfiny? -2  / Źle umieszczony komentarz!
 
 Po stworzeniu pliku z zestawem pytań, należy umieścić go w katalogu `quiz` oraz wpisać jego nazwę do pliku `source.txt`.
 
