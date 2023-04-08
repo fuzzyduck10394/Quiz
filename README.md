@@ -3,7 +3,7 @@
 Aby korzystać z programu, w terminalu w katalogu `quiz` należy wpisać następującą komendę: 
 >g++ code/main.cpp code/quiz_class/algorithm.cpp code/quiz_class/build.cpp -o quiz.out && ./quiz.out
 
-### 2. Jak stworzyć swój zestaw pytań?
+### 2. Jak stworzyć swój własny zestaw pytań?
 W pliku z zestawami pytań muszą być zamieszczone pytania i odpowiedzi w formacie:
 >Ile żołądków mają delfiny? -2
 
