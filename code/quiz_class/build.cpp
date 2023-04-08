@@ -1,4 +1,3 @@
-#include <climits>
 #include <iostream>
 #include <fstream>
 #include "quiz_class.h"
@@ -41,7 +40,7 @@ string RawString(string s) {
 }
 
 bool quiz::ActiveLine(string line) {
-    return (line.size()!=0 && line[0]!='/' && line[0]!='\n');
+    return !((line[0] == '/' && line[1] == '/') || line.size()==0 || line[0] == '\n'); 
 }
 
 pair<string, string> quiz::ToQs(string s) {
@@ -49,7 +48,8 @@ pair<string, string> quiz::ToQs(string s) {
 
     bool answer = false;
     for (int i=0; i<s.size(); i++) {
-        if (s[i] == '-' && !answer) answer = true;
+        if (i > 0 && s[i] == '/' && s[i-1] == '/') break;
+        else if (s[i] == '-' && !answer) answer = true;
         else if (!answer) res.first += s[i];
         else if (answer)  res.second += s[i];
     }
