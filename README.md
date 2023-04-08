@@ -2,8 +2,7 @@
 
 1. Jak to działa?
       Aby korzystać z programu, w terminalu w katalogu ./quiz/ należy wpisać następującą komendę:
-                                            g++ code/main.cpp code/quiz_class/algorithm.cpp code/quiz_class/build.cpp && ./a.out
-
+g++ code/main.cpp code/quiz_class/algorithm.cpp code/quiz_class/build.cpp -o quiz.out && ./quiz.out
 2. Jak stworzyć swój zestaw pytań?
       W zestawie pytań muszą być zamieszczone pytania i odpowiedzi na nie w formacie:
                                             Ile zoladkow maja delfiny?      -2
