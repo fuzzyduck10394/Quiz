@@ -9,11 +9,12 @@ quiz::quiz() {
 }
 
 
-/****************************GETTING STARTED****************************/
-/*basic*/
+
+/**************************************************************************************** basic **********/
 string quiz::GetExactLine(int n) {
+    ifstream file;
     file.open(SRC, ios::in);
-    if (!file.good()) {
+    if (!file.is_open()) {
         cout << "Plik SOURCE.txt jest bledny.\n";
         exit(0);
     }
@@ -61,7 +62,9 @@ void quiz::SetToFalse(bool* start, int size) {
 }
 
 
-/*for main*/
+
+
+/*************************************************************************************** for * main ******/
 bool quiz::CorrectInput(string s) {
     s += ' ';
     string sraw = RawString(s);
@@ -92,11 +95,12 @@ bool quiz::CorrectInput(string s) {
 }
 
 vector<int> quiz::BegParts() {
+    ifstream file;
     vector<int> parts = MakeParts();
     vector<int> res;
     res.assign(parts.size()-2, -1);
     file.open(SRC, ios::in);
-    if (!file.good()) {
+    if (!file.is_open()) {
         cout << "Plik SOURCE.txt jest bledny.\n";
         exit(0);
     }
@@ -131,19 +135,22 @@ vector<int> quiz::BegParts() {
 }
 
 
-/*main*/
+
+
+/**************************************************************************************** main ***********/
 void quiz::OpenFiles() {
     string line;
+    ifstream srcfile, file;
 
-    srcfile.open("../../SOURCE.txt", ios::in);
-    if (!srcfile.good()) {
+    srcfile.open("SOURCE.txt", ios::in);
+    if (!srcfile.is_open()) {
         cout << "Plik SOURCE.txt nie istnieje.\n";
         exit(0);
     }
     getline(srcfile, SRC);
     
     file.open(SRC, ios::in);
-    if (!file.good()) {
+    if (!file.is_open()) {
         cout << "Plik SOURCE.txt jest bledny.\n";
         exit(0);
     }
@@ -152,6 +159,9 @@ void quiz::OpenFiles() {
     while (getline(file, line)) {
         if (ActiveLine(line)) Q++;
     }
+
+    srcfile.close();
+    file.close();
 }
 
 vector<int> quiz::MakeParts() {
@@ -185,9 +195,7 @@ vector<int> quiz::MakeParts() {
     // cout << "\nMakeParts: ";
     // for (auto i:res) cout << i << ' ';
     // cout << endl;
-
-    file.close();
-    srcfile.close();
+    
     return res;
 }
 
