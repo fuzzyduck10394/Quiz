@@ -11,8 +11,8 @@ Aby program działał poprawnie, należy przestrzegać kilku zasad:
 - (na razie) program nie obsługuje znaków polskich w systemie Windows,
 - do każdego pytania musi być załączona odpowiedz poprzedzona znakiem `-`. W innym wypadku program je zignoruje.
 
-Aby wstawić komentarz, należy umieścić poprzedzający go znak `/`. 
->Ile żołądków mają delfiny? -2  */Tu jest komentarz!*
+Aby wstawić komentarz, należy umieścić poprzedzający go znak `//`. 
+>Ile żołądków mają delfiny? -2  *//Tu jest komentarz!*
 
 Po stworzeniu pliku z zestawem pytań, należy umieścić go w katalogu `quiz` oraz wpisać jego nazwę do pliku `source.txt`.
 
