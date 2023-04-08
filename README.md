@@ -9,7 +9,7 @@ W pliku z zestawami pytań muszą być zamieszczone pytania i odpowiedzi w forma
 
 Aby program działał poprawnie, należy przestrzegać kilku zasad:
 - (na razie) program nie obsługuje znaków polskich w systemie Windows,
-- do każdego pytania musi być załączone pytanie poprzedzone znakiem `-`. W innym wypadku program je zignoruje.
+- do każdego pytania musi być załączona odpowiedz poprzedzona znakiem `-`. W innym wypadku program je zignoruje.
 
 Aby wstawić komentarz, należy umieścić **na początku** linii znak `/`. Na tę chwilę program nie obsługuje następującego formatu komentarza:
 >Ile zoladkow maja delfiny?      -2  / Zle umieszczony komentarz!
