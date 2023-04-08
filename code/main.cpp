@@ -3,5 +3,5 @@
 int main() {
     quiz q;
     q.AskParts();
-
+    q.StartQuiz();
 }
