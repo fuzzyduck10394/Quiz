@@ -5,6 +5,7 @@
 using namespace std;
 
 quiz::quiz() {
+    SCORE = 0;
     OpenFiles();
 }
 
@@ -31,7 +32,7 @@ string quiz::GetExactLine(int n) {
     return "";
 }
 
-string quiz::RawString(string s) {
+string RawString(string s) {
     string res = "";
     for (int i=0; i<s.size(); i++){
         if (s[i]!=' ' && s[i]!='\n' && s[i]!='\t') res += s[i];
@@ -50,14 +51,14 @@ pair<string, string> quiz::ToQs(string s) {
     for (int i=0; i<s.size(); i++) {
         if (s[i] == '-' && !answer) answer = true;
         else if (!answer) res.first += s[i];
-        else if (answer) res.second += s[i];
+        else if (answer)  res.second += s[i];
     }
 
-    if (res.second == "" || res.first == "") return {"", ""};
+    if (res.second == "" || res.first == "" || RawString(res.second).size() == 0) return {"", ""};
     return res;
 }
 
-void quiz::SetToFalse(bool* start, int size) {
+void SetToFalse(bool* start, int size) {
     for(bool* i = start; i<start+size; i++) *i = false;
 }
 
