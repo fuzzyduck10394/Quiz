@@ -5,74 +5,51 @@
 #include "quiz_class.h"
 using namespace std;
 
+struct comp;
+
 // basic
-string RawString(string);               // removes blank chars: {' ', '\n', '\t'}
-bool IsLetter(char);                    // tells if a char is a letter
-bool TheSameChar(char, char);           // tells if chars are the same including capital letters
-
-void SetToFalse(bool*, int);            // in build.cpp; set a dynamic bool array to false
-
+bool IsYes(string);                     // basic.cpp
+bool IsNo(string);                      // basic.cpp
+bool tnInput();                         // basic.cpp
+bool IsLetter(char);                    // basic.cpp
+bool TheSameChar(char, char, bool);     // basic.cpp
+string RawString(string);               // basic.cpp
+void SetToFalse(bool*, int);            // basic.cpp
+bool HasNr(string);                     // basic.cpp
+void CheckExit(string, string, bool);   // basic.cpp
+                                        
 // for main functions
-short tnInput(string);                  // called when all of the questions were answered correctly in the first turn; returns -1 if the input is not correct, 1 if the user agreed or 0 if the user disagreed
 void AssignPq(int);                     // assignes pq with i*{i, 0} for i in {0, arg}
-
-// main
-
+void PrintPq(priority_queue<pair<int,unsigned int>,vector<pair<int, unsigned int>>,comp>); // debug - prints priority queue's elements 
 
 // class
 // private:
-//      void quiz::MixQs();             // mixes qs's elements using rand()
-//      bool quiz::AskQuestion(int);    // clears screen, asks question and returns if answer is correct
-//      void quiz::Round();             // typical quiz's round
+//      void quiz::MixQs();                     // mixes qs's elements using rand()
+//      string quiz::AskQuestion(int);          // clears screen, asks question and returns an answer
+//      bool CheckAnswer(string, string);       // checks if the answer is correct
+//      void quiz::Round();                     // an infinity loop
 // public:
-//      void quiz::StartQuiz();         // asks all of the questions in random order
+//      void quiz::StartQuiz();                 // asks all of the questions in random order and then triggers Round()
 
-// variables
+
+
+// global variables
 struct comp {
     // returns true if pair<int, int> p1 should be found before pair<int, int> p2
     bool operator()(const pair<int, unsigned int>& p1,
                     const pair<int, unsigned int>& p2) const
-    {
-        return p1.second > p2.second;
-        
-    }
+    { return p1.second > p2.second; }
 };
 // sorts from the smallest to the biggest value by the second variable; allows duplications
 priority_queue<pair<int, unsigned int>, vector<pair<int, unsigned int>>, comp> pq;
 
 
 
-/**************************************************************************************** basic **********/
-string RawString(string s) {
-    string res = "";
-    for (int i=0; i<s.size(); i++){
-        if (s[i] != ' ' && s[i] != '\n' && s[i] != '\t') res += s[i];
-    }
-    return res;
-}
+/***************************************************************************************** for main *******/
 
-bool IsLetter(char a) {
-    return ((a >= 'a' && a <= 'z') || (a >= 'A' && a <= 'Z'));
-}
+void AssignPq(int size) {for (int i=0; i<size; i++) pq.push({i, 0});}
 
-bool TheSameChar(char a, char b) {
-    if (IsLetter(a) && IsLetter(b)) return (a == b || int(a)+32 == int(b) || int(a)-32 == int(b));
-    else return (a == b);
-}
-
-
-/*************************************************************************************** for  main ******/
-short tnInput(string input) {
-    input = RawString(input);
-    if (input == "tak" || input == "t") return 1;
-    else if (input == "nie" || input == "n") return 0;
-    else return -1;
-}
-
-void AssignPq(int size) {
-    for (int i=0; i<size; i++) pq.push({i, 0});
-}
-
+// DEBUG function
 void PrintPq(priority_queue<pair<int, unsigned int>, vector<pair<int, unsigned int>>, comp> pq) {
     cout << "\n----" << pq.size() << "\n";
     while(!pq.empty()) {
@@ -83,11 +60,8 @@ void PrintPq(priority_queue<pair<int, unsigned int>, vector<pair<int, unsigned i
     cin.get();
 }
 
-/**************************************************************************************** main ***********/
-
-
-
 /**************************************************************************************** class ***********/
+
 /*** private ***/
 void quiz::MixQs() {
     srand(time(NULL));
@@ -96,44 +70,60 @@ void quiz::MixQs() {
         swap(qs[i], qs[r]);
     }
 }
+                        // answer, correct
+bool quiz::CheckAnswer(string a, string c) {
+    if (BLANK == false) {
+        a = RawString(a);
+        c = RawString(c);
+    }
 
-bool quiz::AskQuestion(int ind) {
-    system("clear");
-    cout << "SCORE: " << SCORE << '\n';
+    // don't able to do typos when answering the date
+    const bool TYPOS_ALLOWED = (TYPOS == false && !HasNr(a) && a.size() > 5);
 
-    cout << qs[ind].first << '\n';
-    string input;
-    getline(cin, input);
+    int mistakes = 0, mistakes_max = 1;
 
-    input = RawString(input);
-    string correct = RawString(qs[ind].second);
+    for (int i=0; i<a.size(); i++) {
+        if (!TheSameChar(a[i], c[i], CAPIT)) {
+            if (TYPOS_ALLOWED) {
+                if (i>0 && TheSameChar(a[i-1], c[i], CAPIT)) continue;
+                else if (i<a.size()-1 && TheSameChar(a[i+1], c[i], CAPIT)) continue;
+                else mistakes++;
+            }
+            else return false;
+        }
 
-    if (input.size() != correct.size()) return false;
-
-    for (int i=0; i<input.size(); i++) {
-        if (!TheSameChar(input[i], correct[i])) return false;
+        if (mistakes > mistakes_max) return false;
     }
 
     return true;
 }
 
-void quiz::Round() {
-    const int QS_SIZE = qs.size();              // const qs.size()
-    const int F = int(0.2 * (double)QS_SIZE);   // a question can't be asked if it was asked in F (20% of number of questions) rounds
-    // DEBUG
-    // cout << "F: " << F << '\n';
-    // cin.get();
+string quiz::AskQuestion(int ind) {
+    system("clear");
+    cout << "SCORE: " << SCORE << '\n';
 
-    queue<int> lastf;                           // lastf queue
-    bool in_lastf[QS_SIZE];                     // tells if element is present in the lastf queue
+    string question = qs[ind].first;
+    cout << question << '\n';
+
+    string input;
+    getline(cin, input);
+    CheckExit(input, qs[ind].second, BLANK);
+
+    return input;
+}
+
+void quiz::Round() {
+    const int QS_SIZE = qs.size();                      
+    const int F = max(int(0.2 * (double)QS_SIZE), 1);   // a question can't be asked if it was asked in F (20% of number of questions) rounds
+
+    queue<int> lastf;                                   
+    bool in_lastf[QS_SIZE];                             
     SetToFalse(in_lastf, QS_SIZE);
 
-    stack<pair<int, int>> st;                   // stack used to find pq.top() which wasn't asked in last F rounds
-    pair<int, int> curr;                        // a temporary pq.top()
-    unsigned /*long long*/ int priority_v = 1;                // is added to a correctly answered question
+    stack<pair<int, int>> st;                           // stack used to find pq.top() which wasn't asked in last F rounds
+    pair<int, int> curr;                                
+    unsigned /*long long*/ int priority_v = 1;          
                                                 
-                                                
-
     while (1) {
         // shouldn't be triggered
         if (pq.empty()) {
@@ -141,7 +131,6 @@ void quiz::Round() {
             exit(0);
         }
 
-        // start - chooses a question from pq
         while (in_lastf[pq.top().first]) {
             st.push(pq.top());
             pq.pop();
@@ -149,8 +138,8 @@ void quiz::Round() {
         curr = pq.top();        
         pq.pop();
 
-        // asking question and update it's atributes
-        bool correct = AskQuestion(curr.first);
+        string answer = AskQuestion(curr.first);
+        bool correct = CheckAnswer(answer, qs[curr.first].second);
 
         if (lastf.size() >= F) {
             in_lastf[lastf.front()] = false;
@@ -159,34 +148,35 @@ void quiz::Round() {
         in_lastf[curr.first] = true;
         lastf.push(curr.first);
         
-        
-        // checking if an answer is correct and updating the question's priority in pq
         if (correct) {
-            curr.second += priority_v;
             SCORE++;
-            priority_v++;
+            curr.second += priority_v++;
         }
         else {
             // TODO: maybe some updates for a priority of a question which isn't asked correctly?...
             SCORE--;
-    
-            cout << qs[curr.first].second << '\n';
+            
+            string correct_answer = qs[curr.first].second;
+            cout << correct_answer << '\n';
             string cinget;
             getline(cin, cinget);
+            
+            // '.' tells that the answer was correct; undo
+            if (cinget.size() == 1 && cinget[0] == '.') {
+                SCORE++;
+                curr.second += priority_v++;
+            }
         }
 
-        // end - adding a changed element to the pq back again
         pq.push(curr);
         while (!st.empty()) {
             pq.push(st.top());
             st.pop();
         }
         
-        // DEBUG
         // PrintPq(pq);
     }
 }
-
 
 
 /*** public ***/
@@ -194,33 +184,36 @@ void quiz::StartQuiz() {
     MixQs();
 
     for (int i=0; i<qs.size(); i++) {
-        bool correct = AskQuestion(i);
+        string answer = AskQuestion(i);
+        bool correct = CheckAnswer(answer, qs[i].second);
         if (correct) {
             SCORE++;
             if (SCORE == qs.size()) {
                 cout << "\nBrawo! Odpowiedziałeś dobrze na wszystkie pytania za pierwszym razem.\n"
-                     << "Czy chcesz kontynuować? (t/n)\n";
+                        "Czy chcesz kontynuować? (t/n)\n";
 
-                string input;
-                getline(cin, input);
-                while (tnInput(input) == -1) {
-                    cout << "Wpisz 'tak' lub 'nie'.\n";
-                    getline(cin, input);
-                }
-
-                if (tnInput(input) == 1) {
+                bool tn_answer = tnInput();
+                if (tn_answer) {
                     AssignPq(qs.size());
                     break;
                 }
-                else if (tnInput(input) == 0) exit(0);
+                else exit(0);
             }
         }
         else {
             SCORE--;
             pq.push({i, 0}); 
-            cout << qs[i].second << '\n';
+
+            string correct_answer = qs[i].second;
+            cout << correct_answer << '\n';
             string cinget;
             getline(cin, cinget);
+
+            // '.' tells that the answer was correct; undo
+            if (cinget.size() == 1 && cinget[0] == '.') {
+                SCORE++;
+                pq.pop();
+            }
         }
     }
 

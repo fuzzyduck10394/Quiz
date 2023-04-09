@@ -4,43 +4,45 @@
 using namespace std;
 
 // basic
-string RawString(string);               // removes blank chars: {' ', '\n', '\t'}
+void SetToFalse(bool*, int);            // basic.cpp
+string RawString(string);               // basic.cpp
+bool IsOZ(char);                        // basic.cpp
+bool IsNr(char);                        // basic.cpp
+bool tnInput();                         // basic.cpp
+                                        
 string GetExactLine(int);               // getline() but for the exact line in file
-bool ActiveLine(string);                // checks if the line is not a comment and is not empty
-void SetToFalse(bool*, int);            // sets dynamic bool array to false
+bool ActiveLine(string);                // checks if the line is not a comment, is not empty and has the '-' char
                                 
 // for main functions
-void OpenFiles();                       // checks if source.txt and answers are able to open 
 bool CorrectInput(string);              // checks if parts on input are typed correctly
-pair<string, string> ToQs(string );     // divides a line into a question and it's answer
-vector<int> MakeParts();                // returns size for the parts; [0] element is the size of minimum part size and [1] is a maximal size 
+vector<int> MakeParts();                // returns sizes for parts; [0] is a minimum size and [1] is a maximal size 
 vector<int> BegParts();                 // returns a vector of numbers of lines in the file which are beginnings of the parts
+pair<string, string> ToQs(string);      // divides a line into a question and it's answer
 
 // class
+// void quiz::OpenFiles();              // checks if source.txt and answers are able to open and then updates the BLANK, CAPIT and TYPOS variables
 // void quiz::AskParts();               // gets from the user parts of the quiz (public) 
 // void quiz::BuildQue(string);         // writes the vector<pair<string, string>qs using MakeParts() and BegParts() functions (private)
 
-// variables
+
+// global variables
 int Q = 0;                              // number of active lines in the answer file
 string SRC;                             // source.txt's content
                                         
 
 
 /************************************************************************************** constructor *******/
+
 quiz::quiz() {
+    BLANK = false;
+    CAPIT = false;
+    TYPOS = false;
     SCORE = 0;
+
     OpenFiles();
 }
 
-
 /**************************************************************************************** basic ***********/
-/* string RawString(string s) {
-    string res = "";
-    for (int i=0; i<s.size(); i++) {
-        if (s[i]!=' ' && s[i]!='\n' && s[i]!='\t') res += s[i];
-    }
-    return res;
-} */
 
 string GetExactLine(int n) {
     ifstream file;
@@ -65,44 +67,23 @@ string GetExactLine(int n) {
 }
 
 bool ActiveLine(string line) {
-    return !((line[0] == '/' && line[1] == '/') || line.size() == 0 || line[0] == '\n'); 
+    if ((line[0] == '/' && line[1] == '/') || line.size() == 0 || line[0] == '\n') return false;
+    line = RawString(line);
+    for (int i=0; i<line.size(); i++) {
+        if (line[i] == '-') return true;
+    }
+    return false;
 }
-
-void SetToFalse(bool* start, int size) {
-    for (bool* i = start; i < start + size; i++) *i = false;
-}
-
 
 /***************************************************************************************** for main *******/
-void OpenFiles() {
-    string line;
-    ifstream srcfile, file;
-
-    srcfile.open("source.txt", ios::in);
-    if (!srcfile.is_open()) {
-        cout << "Plik source.txt nie istnieje.\n";
-        exit(0);
-    }
-    getline(srcfile, SRC);
-    
-    file.open(SRC, ios::in);
-    if (!file.is_open()) {
-        cout << "Plik source.txt jest błędny.\n";
-        exit(0);
-    }
-
-    while (getline(file, line)) {
-        if (ActiveLine(line)) Q++;
-    }
-
-    srcfile.close();
-    file.close();
-}
 
 bool CorrectInput(string s) {
     string sraw = RawString(s);
     if (sraw.size() == 0) return false;
     if (sraw[0] == 'w' && sraw.size() == 1) return true;
+    
+    // 'e' == end of the program
+    else if (sraw[0] == 'e' && sraw.size() == 1) exit(0);
 
     bool* used = new bool[Q+1];
     SetToFalse(used, Q+1);
@@ -136,7 +117,9 @@ pair<string, string> ToQs(string s) {
         if (s[i] == '/' && s[i+1] == '/') break;
         else if (s[i] == '-' && !answer) answer = true;
         else if (!answer) res.first += s[i];
-        else if (answer)  res.second += s[i];
+        else if (answer) {
+            res.second += s[i];
+        }
     }
 
     if (res.second == "" || res.first == "" || RawString(res.second).size() == 0) return {"", ""};
@@ -170,11 +153,6 @@ vector<int> MakeParts() {
         res[1] = maks;
     }
     
-    // DEBUG
-    // cout << "\nMakeParts: ";
-    // for (auto i:res) cout << i << ' ';
-    // cout << endl;
-    
     return res;
 }
 
@@ -190,8 +168,8 @@ vector<int> BegParts() {
         exit(0);
     }
 
-    // c -- na ktorym pytaniu jestes teraz
-    // cc -- na ktorym pytaniu jestes w partii
+    // c -- na którym pytaniu jesteś teraz
+    // cc -- na którym pytaniu jesteś w partii
     // ind -- numer partii
     int c = 0, cc = 0, ind = 0;
     string line;
@@ -211,16 +189,63 @@ vector<int> BegParts() {
 
     res.push_back(c+1);
 
-    // DEBUG
-    // cout << "BegParts:" << endl;
-    // for (auto i:res) cout << '\t' << i << "\n";
-
     file.close();
     return res;
 }
 
-
 /**************************************************************************************** class ***********/
+
+void quiz::OpenFiles() {
+    string line;
+    ifstream srcfile, file;
+
+    srcfile.open("source.txt", ios::in);
+    if (!srcfile.is_open()) {
+        cout << "Plik source.txt nie istnieje.\n";
+        exit(0);
+    }
+    getline(srcfile, SRC);
+    
+    file.open(SRC, ios::in);
+    if (!file.is_open()) {
+        cout << "Plik "<< SRC <<" nie istnieje.\n";
+        exit(0);
+    }
+
+    bool first = true;
+    while (getline(file, line)) {
+        if (ActiveLine(line)) Q++;
+
+        else if (first) {
+            line = RawString(line);
+            // if the first line is probably the BLANK, CAPIT and TYPOS variables... 
+            if (line.size() == 3 && IsNr(line[0]) && IsNr(line[1]) && IsNr(line[2])) {
+                if (IsOZ(line[0]) && IsOZ(line[1]) && IsOZ(line[2])) {
+                    BLANK = (line[0] == '1')? true : false;
+                    CAPIT = (line[1] == '1')? true : false;
+                    TYPOS = (line[2] == '1')? true : false;
+                }
+                else {
+                    // mistake in the first line 
+                    cout << "UWAGA: W linii pierwszej w pliku " << SRC << " jest błąd.\nChcesz kontynuować? (t/n)\n";
+                    bool tn_answer = tnInput();
+                    if (!tn_answer) exit(0);
+                    else system("clear");
+                }
+            }
+        }
+
+        first = false;
+    }
+    // question_set.txt is empty
+    if (first) {
+        cout << "Plik "<< SRC <<" jest pusty.\n";
+        exit(0);
+    }
+    srcfile.close();
+    file.close();
+}
+
 void quiz::AskParts() {
     vector<int> parts = MakeParts();
     string input = "1";
@@ -228,15 +253,21 @@ void quiz::AskParts() {
 
     if (P_SIZE == 1) {
         const int Q_SIZE = parts[0];
+        if (Q_SIZE == 1) {
+            cout << "W pliku znajduje się za mało pytań.\n";
+            exit(0);
+        }
+
         cout << "Quiz nie został podzielony na części. "; 
-        if (Q_SIZE == 1) cout << "Jest 1 pytanie.\n";
-        else if (Q_SIZE > 1 && Q_SIZE <= 4) cout << "Są " << Q_SIZE << " pytania.\n";
+        if (Q_SIZE > 1 && Q_SIZE <= 4) cout << "Są " << Q_SIZE << " pytania.\n";
         else if (Q_SIZE >= 5 && Q_SIZE <= 21) cout << "Jest " << Q_SIZE << " pytań.\n";
         // SĄ 22 pytania, lecz wielkość jednej partii to maksymalnie 15 pytań
 
         cout << "Zaczynamy?\n";
         string cinget;
         getline(cin, cinget);
+
+        if (RawString(cinget).size() == 1 && (cinget[0] == 'e' || cinget[0] == 'n') || RawString(cinget) == "nie") exit(0);
     }
     else {
         cout << "Quiz został podzielony na " << P_SIZE << " części po " << parts[0];
@@ -276,7 +307,5 @@ void quiz::BuildQue(string input) {
         }
         else nr += input[i];
     }
-    // DEBUG
-    // for (auto i:qs) cout << i.first << '\n' << i.second << '\n' << '\n';
 }
 
