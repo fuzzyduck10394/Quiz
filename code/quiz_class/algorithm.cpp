@@ -1,6 +1,7 @@
 #include <iostream>
 #include <random>
 #include <time.h>
+#include <stack>
 #include "quiz_class.h"
 using namespace std;
 
@@ -8,6 +9,8 @@ using namespace std;
 string RawString(string);               // removes blank chars: {' ', '\n', '\t'}
 bool IsLetter(char);                    // tells if a char is a letter
 bool TheSameChar(char, char);           // tells if chars are the same including capital letters
+
+void SetToFalse(bool*, int);            // in build.cpp; set a dynamic bool array to false
 
 // for main functions
 short tnInput(string);                  // called when all of the questions were answered correctly in the first turn; returns -1 if the input is not correct, 1 if the user agreed or 0 if the user disagreed
@@ -27,15 +30,15 @@ void AssignPq(int);                     // assignes pq with i*{i, 0} for i in {0
 // variables
 struct comp {
     // returns true if pair<int, int> p1 should be found before pair<int, int> p2
-    bool operator()(const pair<int, int>& p1,
-                    const pair<int, int>& p2) const
+    bool operator()(const pair<int, unsigned int>& p1,
+                    const pair<int, unsigned int>& p2) const
     {
         return p1.second > p2.second;
         
     }
 };
 // sorts from the smallest to the biggest value by the second variable; allows duplications
-priority_queue<pair<int, int>, vector<pair<int, int>>, comp> pq;
+priority_queue<pair<int, unsigned int>, vector<pair<int, unsigned int>>, comp> pq;
 
 
 
@@ -70,7 +73,15 @@ void AssignPq(int size) {
     for (int i=0; i<size; i++) pq.push({i, 0});
 }
 
-
+void PrintPq(priority_queue<pair<int, unsigned int>, vector<pair<int, unsigned int>>, comp> pq) {
+    cout << "\n----" << pq.size() << "\n";
+    while(!pq.empty()) {
+        cout << pq.top().first +1<< ' ' << pq.top().second << '\n';
+        pq.pop();
+    }
+    cout << "----\n";
+    cin.get();
+}
 
 /**************************************************************************************** main ***********/
 
@@ -107,32 +118,73 @@ bool quiz::AskQuestion(int ind) {
 }
 
 void quiz::Round() {
-    if (pq.empty()) {
-        cout << "Błąd kolejki.\n";
-        exit(0);
+    const int QS_SIZE = qs.size();              // const qs.size()
+    const int F = int(0.2 * (double)QS_SIZE);   // a question can't be asked if it was asked in F (20% of number of questions) rounds
+    // DEBUG
+    // cout << "F: " << F << '\n';
+    // cin.get();
+
+    queue<int> lastf;                           // lastf queue
+    bool in_lastf[QS_SIZE];                     // tells if element is present in the lastf queue
+    SetToFalse(in_lastf, QS_SIZE);
+
+    stack<pair<int, int>> st;                   // stack used to find pq.top() which wasn't asked in last F rounds
+    pair<int, int> curr;                        // a temporary pq.top()
+    unsigned /*long long*/ int priority_v = 1;                // is added to a correctly answered question
+                                                
+                                                
+
+    while (1) {
+        // shouldn't be triggered
+        if (pq.empty()) {
+            cout << "Błąd kolejki.\n";
+            exit(0);
+        }
+
+        // start - chooses a question from pq
+        while (in_lastf[pq.top().first]) {
+            st.push(pq.top());
+            pq.pop();
+        }
+        curr = pq.top();        
+        pq.pop();
+
+        // asking question and update it's atributes
+        bool correct = AskQuestion(curr.first);
+
+        if (lastf.size() >= F) {
+            in_lastf[lastf.front()] = false;
+            lastf.pop();
+        }
+        in_lastf[curr.first] = true;
+        lastf.push(curr.first);
+        
+        
+        // checking if an answer is correct and updating the question's priority in pq
+        if (correct) {
+            curr.second += priority_v;
+            SCORE++;
+            priority_v++;
+        }
+        else {
+            // TODO: maybe some updates for a priority of a question which isn't asked correctly?...
+            SCORE--;
+    
+            cout << qs[curr.first].second << '\n';
+            string cinget;
+            getline(cin, cinget);
+        }
+
+        // end - adding a changed element to the pq back again
+        pq.push(curr);
+        while (!st.empty()) {
+            pq.push(st.top());
+            st.pop();
+        }
+        
+        // DEBUG
+        // PrintPq(pq);
     }
-    bool correct = AskQuestion(pq.top().first);
-
-    pair<int, int> element = pq.top();
-    pq.pop();
-    if (correct) {
-        element.second++;
-        SCORE++;
-    }
-    else {
-        element.second--;
-        SCORE--;
-
-        cout << qs[element.first].second << '\n';
-        string cinget;
-        getline(cin, cinget);
-    }
-    pq.push(element);
-
-    // cout << "New priority: " << element.second << '\n';
-    cin.get();
-
-    Round();
 }
 
 
@@ -171,8 +223,7 @@ void quiz::StartQuiz() {
             getline(cin, cinget);
         }
     }
-    // cout << "Starting using the priority queue.\n";
-    // cin.get();
+
     Round();
 }
 
