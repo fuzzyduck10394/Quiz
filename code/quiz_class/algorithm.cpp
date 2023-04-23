@@ -78,13 +78,17 @@ bool quiz::CheckAnswer(string a, string c) {
     }
 
     // don't able to do typos when answering the date
-    const bool TYPOS_ALLOWED = (TYPOS == false && !HasNr(a) && a.size() > 5);
+    const bool typos_allowed = (TYPOS == true && !HasNr(a) && a.size() > 5);
 
     int mistakes = 0, mistakes_max = 1;
 
+    // bad length - something missing or something is too much
+    if (!typos_allowed && a.size() != c.size()) return false;
+    else if (a.size() + mistakes_max < c.size() || a.size() - mistakes_max > c.size()) return false;
+
     for (int i=0; i<a.size(); i++) {
         if (!TheSameChar(a[i], c[i], CAPIT)) {
-            if (TYPOS_ALLOWED) {
+            if (typos_allowed) {
                 if (i>0 && TheSameChar(a[i-1], c[i], CAPIT)) continue;
                 else if (i<a.size()-1 && TheSameChar(a[i+1], c[i], CAPIT)) continue;
                 else mistakes++;

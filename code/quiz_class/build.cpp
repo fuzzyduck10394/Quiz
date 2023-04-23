@@ -80,7 +80,7 @@ bool ActiveLine(string line) {
 bool CorrectInput(string s) {
     string sraw = RawString(s);
     if (sraw.size() == 0) return false;
-    if (sraw[0] == 'w' && sraw.size() == 1) return true;
+    if (sraw[0] == 'w' && sraw.size() == 1) return true; 
     
     // 'e' == end of the program
     else if (sraw[0] == 'e' && sraw.size() == 1) exit(0);
@@ -92,7 +92,7 @@ bool CorrectInput(string s) {
     for (int i=0; i<s.size(); i++) {
         if (s[i] == ' ') {
             if (nr == "" || (nr.size() == 1 && (int)nr[0] == 0)) continue;
-            if (stoi(nr) > Q || used[stoi(nr)]) {
+            else if (stoi(nr) > Q || used[stoi(nr)]) {
                 delete[] used;
                 return false;
             }
@@ -127,6 +127,7 @@ pair<string, string> ToQs(string s) {
 }
 
 vector<int> MakeParts() {
+    cout << "MakeParts\n";
     vector<int> res;
     
     if (Q <= 15) res.assign(2+1, Q);
@@ -157,6 +158,7 @@ vector<int> MakeParts() {
 }
 
 vector<int> BegParts() {
+    cout << "BegParts\n";
     vector<int> parts = MakeParts();
     vector<int> res;
     res.assign(parts.size()-2, -1);
@@ -186,7 +188,6 @@ vector<int> BegParts() {
             }
         }
     }
-
     res.push_back(c+1);
 
     file.close();
@@ -275,11 +276,26 @@ void quiz::AskParts() {
         cout << " pytań. \nKtóre z części chcesz dzisiaj przećwiczyć? Jeśli chcesz przećwiczyć "
                 "wszystkie z nich, wpisz 'w'.\n";
 
+        // BUG!!!
+        cout << "przed inputem\n";
         getline(cin, input);
+        cout << "po inpucie\n";
+
         while (!CorrectInput(input)) {
             cout << "Wpisz 'w' lub oddzielone od siebie spacją części quizu.\n";
             getline(cin, input);
         }
+    }
+    
+    cout << "zamiana na odpowiedni input... \n";
+    if (RawString(input)[0] == 'w') {
+        input = "";
+        for (int i=1; i<=parts.size()-2; i++){
+            input += char(i+48);
+            input += ' ';
+        } 
+
+        cout << input << '\n';
     }
     BuildQue(input);
 }
@@ -288,14 +304,19 @@ void quiz::BuildQue(string input) {
     vector<int> parts = MakeParts();
     vector<int> beg_parts = BegParts();
 
+    cout << '\n';
+    for (auto i : beg_parts) cout << i << '\n';
+    cout << '\n';
+
     string nr = "";
     input += ' ';
+    cout << "input; " << input << endl;
     for (int i=0; i<input.size(); i++) {
         if (input[i] == ' ') {
             if (nr == "") continue;
             
-            const int begin_p = beg_parts[stoi(nr)-1];
-            const int end_p = beg_parts[stoi(nr)];
+            int begin_p = beg_parts[stoi(nr)-1];
+            int end_p = beg_parts[stoi(nr)];
 
             for (int i=begin_p; i<end_p; i++) {
                 if (ActiveLine(GetExactLine(i))) {
