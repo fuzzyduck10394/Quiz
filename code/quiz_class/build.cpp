@@ -127,7 +127,6 @@ pair<string, string> ToQs(string s) {
 }
 
 vector<int> MakeParts() {
-    cout << "MakeParts\n";
     vector<int> res;
     
     if (Q <= 15) res.assign(2+1, Q);
@@ -158,7 +157,6 @@ vector<int> MakeParts() {
 }
 
 vector<int> BegParts() {
-    cout << "BegParts\n";
     vector<int> parts = MakeParts();
     vector<int> res;
     res.assign(parts.size()-2, -1);
@@ -276,10 +274,7 @@ void quiz::AskParts() {
         cout << " pytań. \nKtóre z części chcesz dzisiaj przećwiczyć? Jeśli chcesz przećwiczyć "
                 "wszystkie z nich, wpisz 'w'.\n";
 
-        // BUG!!!
-        cout << "przed inputem\n";
         getline(cin, input);
-        cout << "po inpucie\n";
 
         while (!CorrectInput(input)) {
             cout << "Wpisz 'w' lub oddzielone od siebie spacją części quizu.\n";
@@ -287,7 +282,6 @@ void quiz::AskParts() {
         }
     }
     
-    cout << "zamiana na odpowiedni input... \n";
     if (RawString(input)[0] == 'w') {
         input = "";
         for (int i=1; i<=parts.size()-2; i++){
@@ -295,7 +289,6 @@ void quiz::AskParts() {
             input += ' ';
         } 
 
-        cout << input << '\n';
     }
     BuildQue(input);
 }
@@ -304,13 +297,8 @@ void quiz::BuildQue(string input) {
     vector<int> parts = MakeParts();
     vector<int> beg_parts = BegParts();
 
-    cout << '\n';
-    for (auto i : beg_parts) cout << i << '\n';
-    cout << '\n';
-
     string nr = "";
     input += ' ';
-    cout << "input; " << input << endl;
     for (int i=0; i<input.size(); i++) {
         if (input[i] == ' ') {
             if (nr == "") continue;
