@@ -13,36 +13,33 @@ Aby wstawić komentarz, należy umieścić poprzedzający go znak `//`.
 Po stworzeniu pliku z zestawem pytań, należy umieścić go w katalogu `quiz` oraz wpisać jego nazwę do pliku `source.txt`.
 
 ## 3. Personalizacja 
-W pierwszym wierszu pliku można zamieścić linię, która określa sposób, w który program ma sprawdzać poprawność odpowiedzi na pytania.
-
+W pierwszym wierszu pliku można zamieścić linię, która określa sposób sprawdzania poprawności odpowiedzi.
 Linia ta powinna składać się z trzech wartości logicznych określanych symbolami `0` (fałsz) oraz `1` (prawda), np.:
 >1 0 1
 
 Wartości te określają prawdziwość kolejnych stwierdzeń:
-- Przy sprawdzaniu zwróć uwagę na **znaki białe**.
-- Przy sprawdzaniu zwróć uwagę na **wielkie litery**.
-- Przy sprawdzaniu zwróć uwagę na **literówki**.
+1. Przy sprawdzaniu zwróć uwagę na **znaki białe**.
+2. Przy sprawdzaniu zwróć uwagę na **wielkie litery**.
+3. Przy sprawdzaniu zwróć uwagę na **literówki**.
 
 W przypadku nieumieszczenia tych wartości w pliku, program domyślnie przyjmie każde z tych twierdzeń za fałszywe.
 
 ### Znaki białe
-Do znaków białych zaliczają się: znak nowej linii, tab oraz spacja.
+Do znaków białych zaliczają się: znak nowej linii, klawisz Tab oraz spacja.
 
 ### Literówki
 Literówka w odpowiedzi następuje kiedy:
-- znak znajduje się na **nieodpowiednim miejscu**, np.:
+- znak znajduje się w nieodpowiednim miejscu, np.:
 >opdowiedź
-
 Ten rodzaj literówki w przypadku określeniu wartości logicznej na fałsz jest dozwolony dowolną ilość razy.
 
--  znak występuje w **zupełnie innym miejscu w szablonie** lub **w ogóle nie występuje**, np.:
->odpowxedz
-
-Ten rodzaj literówki w przypadku określenia wartości logicznej na fałsz jest dozwolony jedynie jeden raz.
+-  znak występuje w szablonie w zupełnie innym miejscu lub w ogóle w nim nie występuje, np.:
+>odpowxedź
+Ten rodzaj literówki w przypadku określenia wartości logicznej na fałsz jest dozwolony jedynie jeden raz w całej odpowiedzi na pytanie.
 
 
 ## 3. Dodatkowe informacje
 - Program działa tylko na urządzeniach z systemem Linux.
-- W wypadku popełnienia literówki w odpowiedzi na pytanie, wpisanie znaku `.` anuluje utratę punktów.
-- Aby wyjść z programu, w odpowiedzi na pytanie należy wpisać `e`.
-- Niezależnie od podanych wartości logicznych w pliku z pytaniami, program zawsze nie zezwala na popełnianie literówek w odpowiedziach, w których znajduje się liczba (np. w datach).
+- W przypadku pomyłki, wpisanie znaku `.` anuluje utratę punktów.
+- Aby wyjść z programu, w odpowiedzi na pytanie należy wpisać `e` (exit).
+- Niezależnie od podanych wartości logicznych w pliku z pytaniami, program nigdy nie zezwala na popełnianie literówek w odpowiedziach, w których znajduje się liczba (np. w datach).
