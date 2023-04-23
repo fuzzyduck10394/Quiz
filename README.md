@@ -23,7 +23,7 @@ Wartości te określają prawdziwość kolejnych stwierdzeń:
 - Przy sprawdzaniu zwróć uwagę na **wielkie litery**.
 - Przy sprawdzaniu zwróć uwagę na **literówki**.
 
-W przypadku nieumieszczenia tych wartości w pliku, program domyślnie przyjmie każde z tych twierdzeń za **fałszywe**.
+W przypadku nieumieszczenia tych wartości w pliku, program domyślnie przyjmie każde z tych twierdzeń za fałszywe.
 
 ### Znaki białe
 Do znaków białych zaliczają się: znak nowej linii, tab oraz spacja.
