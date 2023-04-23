@@ -31,10 +31,12 @@ Do znaków białych zaliczają się: znak nowej linii, klawisz Tab oraz spacja.
 Literówka w odpowiedzi następuje kiedy:
 - znak znajduje się w nieodpowiednim miejscu, np.:
 >opdowiedź
+
 Ten rodzaj literówki w przypadku określeniu wartości logicznej na fałsz jest dozwolony dowolną ilość razy.
 
 -  znak występuje w szablonie w zupełnie innym miejscu lub w ogóle w nim nie występuje, np.:
 >odpowxedź
+
 Ten rodzaj literówki w przypadku określenia wartości logicznej na fałsz jest dozwolony jedynie jeden raz w całej odpowiedzi na pytanie.
 
 
