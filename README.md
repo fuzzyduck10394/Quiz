@@ -31,12 +31,12 @@ Do znaków białych zaliczają się: znak nowej linii, tab oraz spacja.
 ### Literówki
 Literówka w odpowiedzi następuje kiedy:
 - znak znajduje się na **nieodpowiednim miejscu**, np.:
->o*pd*owiedź
+>opdowiedź
 
 Ten rodzaj literówki w przypadku określeniu wartości logicznej na fałsz jest dozwolony dowolną ilość razy.
 
 -  znak występuje w **zupełnie innym miejscu w szablonie** lub **w ogóle nie występuje**, np.:
->odpow*x*edz
+>odpowxedz
 
 Ten rodzaj literówki w przypadku określenia wartości logicznej na fałsz jest dozwolony jedynie jeden raz.
 
