@@ -78,6 +78,7 @@ void quiz::MixQs() {
         int r = rand() % (qs.size()-i) + i;
         swap(qs[i], qs[r]);
     }
+    // for (auto i : qs) cout << i.first << endl;
 }
 
 unordered_set<string> DivideIntoWords(string s, bool CAPIT) {
