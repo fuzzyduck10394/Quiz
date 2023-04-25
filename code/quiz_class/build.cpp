@@ -16,7 +16,7 @@ bool ActiveLine(string);                // checks if the line is not a comment, 
 // for main functions
 bool CorrectInput(string);              // checks if parts on input are typed correctly
 vector<int> MakeParts();                // returns sizes for parts; [0] is a minimum size and [1] is a maximal size 
-vector<pair<int, int>> BegParts();                 // returns a vector of numbers of lines in the file which are beginnings of the parts; .second is line number in file
+vector<int> BegParts();                 // returns a vector of numbers of lines in the file which are beginnings of the parts
 pair<string, string> ToQs(string);      // divides a line into a question and it's answer
 
 // class
@@ -156,11 +156,10 @@ vector<int> MakeParts() {
     return res;
 }
 
-vector<pair<int,int>> BegParts() {
+vector<int> BegParts() {
     vector<int> parts = MakeParts();
-    vector<pair<int,int>> res;
-    pair<int, int> def = {-1, 0};
-    res.assign(parts.size()-2, def);
+    vector<int> res;
+    res.assign(parts.size()-2, -1);
 
     ifstream file;
     file.open(SRC, ios::in);
@@ -172,16 +171,12 @@ vector<pair<int,int>> BegParts() {
     // c -- na którym pytaniu jesteś teraz
     // cc -- na którym pytaniu jesteś w partii
     // ind -- numer partii
-    int c = 0, cc = 0, ind = 0, line_nr = 0;
+    int cc = 0, ind = 0, line_nr = 0;
     string line;
     while (getline(file, line)) {
         line_nr++;
         if (ActiveLine(line)) {
-            c++;
-            if (cc == 0) {
-                res[ind].first = c;
-                res[ind].second = line_nr;
-            }
+            if (cc == 0) res[ind] = line_nr;
             cc++;
             if (cc == parts[ind+2]) {
                 cc = 0;
@@ -189,7 +184,7 @@ vector<pair<int,int>> BegParts() {
             }
         }
     }
-    res.push_back({c+1, line_nr+1});
+    res.push_back(line_nr+1);
 
     file.close();
     return res;
@@ -298,18 +293,14 @@ void quiz::AskParts() {
 
 void quiz::BuildQue(string input) {
     // vector<int> parts = MakeParts();
-    vector<pair<int, int>> beg_parts = BegParts();
+    vector<int> beg_parts = BegParts();
 
     string nr = "";
     input += ' ';
     for (int i=0; i<input.size(); i++) {
         if (input[i] == ' ' || i == input.size() - 1) {
             if (nr == "") continue;
-            
-            int begin_p = beg_parts[stoi(nr)-1].second;
-            int end_p = beg_parts[stoi(nr)].second;
-
-            for (int i=begin_p; i<end_p; i++) {
+            for (int i=beg_parts[stoi(nr)]; i<beg_parts[stoi(nr)+1]; i++) {
                 if (ActiveLine(GetExactLine(i))) {
                     pair<string, string> to_qs = ToQs(GetExactLine(i));
                     if (to_qs.first != "") qs.push_back(to_qs);
