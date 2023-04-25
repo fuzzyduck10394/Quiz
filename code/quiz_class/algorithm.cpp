@@ -23,7 +23,7 @@ string LowerCase(string);
 
 // for main functions
 void AssignPq(int);                                   // assignes pq with i*{i, 0} for i in {0, arg}
-void PrintPq(priority_queue<pair<int,unsigned int>,vector<pair<int, unsigned int>>,comp>); // debug - prints priority queue's elements 
+void PrintPq();
 unordered_set<string> DivideIntoWords(string);        // returns a vector of words and it's size
 bool isK(string);                                     // checks if there are "K/" in the line
 unordered_set<string> DivideIntoWords(string, bool);  // divides into words by ','
@@ -55,13 +55,17 @@ priority_queue<pair<int, unsigned int>, vector<pair<int, unsigned int>>, comp> p
 void AssignPq(int size) {for (int i=0; i<size; i++) pq.push({i, 0});}
 
 // DEBUG function
-void PrintPq(priority_queue<pair<int, unsigned int>, vector<pair<int, unsigned int>>, comp> pq) {
-    cout << "\n----" << pq.size() << "\n";
+void PrintPq() {
+
+    priority_queue<pair<int, unsigned int>, vector<pair<int, unsigned int>>, comp> pq1;
+    pq1 = pq;
+    cout << "\n----\n" << pq.size() << "\n";
     while(!pq.empty()) {
-        cout << pq.top().first +1<< ' ' << pq.top().second << '\n';
+        cout << pq.top().first +1<< " , " << pq.top().second << '\n';
         pq.pop();
     }
-    cout << "----\n";
+    pq = pq1;
+    cout << "\n----\n";
     cin.get();
 }
 
@@ -70,7 +74,7 @@ void PrintPq(priority_queue<pair<int, unsigned int>, vector<pair<int, unsigned i
 /*** private ***/
 void quiz::MixQs() {
     srand(time(NULL));
-    for (int i=0; i<qs.size()-1; i++) {
+    for (int i=0; i<qs.size()-2; i++) {
         int r = rand() % (qs.size()-i) + i;
         swap(qs[i], qs[r]);
     }
@@ -124,16 +128,20 @@ short quiz::CheckAnswer(string a, string c, bool isK = false) {
         if (not_present.size() == c_div.size()) return false;
         else if (not_present.size() != 0 || not_correct.size() != 0){
             cout << "\nBrakuje: ";
-            for (int i=0; i<not_present.size(); i++) {
-                cout << not_present[i];
-                if (i != not_present.size() - 1) cout << ", ";
+            if (not_present.size() != 0) {
+                for (int i=0; i<not_present.size(); i++) {
+                    cout << not_present[i];
+                    if (i != not_present.size() - 1) cout << ", ";
+                }
             }
-            cout << "\nŹle:\t ";
-            for (int i=0; i<not_correct.size(); i++) {
-                cout << not_correct[i];
-                if (i != not_correct.size() - 1) cout << ", ";
+            if (not_correct.size() != 0) {
+                cout << "\nŹle:\t ";
+                for (int i=0; i<not_correct.size(); i++) {
+                    cout << not_correct[i];
+                    if (i != not_correct.size() - 1) cout << ", ";
+                }
+                cout << '\n';
             }
-            cout << '\n';
 
             return -1;
         }
@@ -181,6 +189,7 @@ string quiz::AskQuestion(int ind) {
     string input;
     getline(cin, input);
     CheckExit(input, qs[ind].second, BLANK);
+
 
     return input;
 }
@@ -254,8 +263,6 @@ void quiz::Round() {
             pq.push(st.top());
             st.pop();
         }
-        
-        // PrintPq(pq);
     }
 }
 

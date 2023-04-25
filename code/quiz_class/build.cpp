@@ -294,23 +294,26 @@ void quiz::AskParts() {
 }
 
 void quiz::BuildQue(string input) {
-    vector<int> parts = MakeParts();
+    // vector<int> parts = MakeParts();
     vector<int> beg_parts = BegParts();
 
     string nr = "";
     input += ' ';
     for (int i=0; i<input.size(); i++) {
-        if (input[i] == ' ') {
+        if (input[i] == ' ' || i == input.size() - 1) {
             if (nr == "") continue;
             
             int begin_p = beg_parts[stoi(nr)-1];
             int end_p = beg_parts[stoi(nr)];
 
-            for (int i=begin_p; i<end_p; i++) {
-                if (ActiveLine(GetExactLine(i))) {
-                    pair<string, string> to_qs = ToQs(GetExactLine(i));
+            int ind = begin_p, counter = 0;
+            while (counter < end_p - begin_p) {
+                if (ActiveLine(GetExactLine(ind))) {
+                    pair<string, string> to_qs = ToQs(GetExactLine(ind));
                     if (to_qs.first != "") qs.push_back(to_qs);
+                    counter++;
                 }
+                ind++;
             }
             nr = "";
         }
