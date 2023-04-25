@@ -129,7 +129,7 @@ pair<string, string> ToQs(string s) {
 vector<int> MakeParts() {
     vector<int> res;
     
-    if (Q <= 15) res.assign(2+1, Q);
+    if (Q <= 15) res.assign(2+1, Q); 
     else {
         // number of parts
         const int p = Q/10 + 1;
@@ -168,9 +168,10 @@ vector<int> BegParts() {
         exit(0);
     }
 
-    // c -- na którym pytaniu jesteś teraz
+
     // cc -- na którym pytaniu jesteś w partii
     // ind -- numer partii
+    
     int cc = 0, ind = 0, line_nr = 0;
     string line;
     while (getline(file, line)) {
@@ -184,6 +185,7 @@ vector<int> BegParts() {
             }
         }
     }
+
     res.push_back(line_nr+1);
 
     file.close();
@@ -245,7 +247,7 @@ void quiz::OpenFiles() {
 
 void quiz::AskParts() {
     vector<int> parts = MakeParts();
-    string input = "1";
+    string input = "";
     const int P_SIZE = parts.size()-2;
 
     if (P_SIZE == 1) {
@@ -292,7 +294,6 @@ void quiz::AskParts() {
 }
 
 void quiz::BuildQue(string input) {
-    // vector<int> parts = MakeParts();
     vector<int> beg_parts = BegParts();
 
     string nr = "";
@@ -300,7 +301,8 @@ void quiz::BuildQue(string input) {
     for (int i=0; i<input.size(); i++) {
         if (input[i] == ' ' || i == input.size() - 1) {
             if (nr == "") continue;
-            for (int i=beg_parts[stoi(nr)]; i<beg_parts[stoi(nr)+1]; i++) {
+            int nr_i = stoi(nr);
+            for (int i=beg_parts[nr_i]; i<beg_parts[nr_i+1] && i<beg_parts[beg_parts.size()-1]; i++) {
                 if (ActiveLine(GetExactLine(i))) {
                     pair<string, string> to_qs = ToQs(GetExactLine(i));
                     if (to_qs.first != "") qs.push_back(to_qs);
