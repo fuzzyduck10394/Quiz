@@ -3,13 +3,13 @@
 #include "quiz_class.h"
 using namespace std;
 
-// basic
-void SetToFalse(bool*, int);            // basic.cpp
-string RawString(string);               // basic.cpp
-bool IsOZ(char);                        // basic.cpp
-bool IsNr(char);                        // basic.cpp
-bool tnInput();                         // basic.cpp
-                                        
+// basic.cpp
+void SetToFalse(bool*, int);
+string RawString(string);
+bool IsOZ(char);
+bool IsNr(char);
+bool tnInput();
+
 string GetExactLine(int);               // getline() but for the exact line in file
 bool ActiveLine(string);                // checks if the line is not a comment, is not empty and has the '-' char
                                 
@@ -35,7 +35,7 @@ string SRC;                             // source.txt's content
 
 quiz::quiz() {
     BLANK = false;
-    CAPIT = false;
+    CAPIT = true; // different than rest because tells if capitals ARE ALLOWED
     TYPOS = false;
     SCORE = 0;
 
@@ -221,7 +221,7 @@ void quiz::OpenFiles() {
             if (line.size() == 3 && IsNr(line[0]) && IsNr(line[1]) && IsNr(line[2])) {
                 if (IsOZ(line[0]) && IsOZ(line[1]) && IsOZ(line[2])) {
                     BLANK = (line[0] == '1')? true : false;
-                    CAPIT = (line[1] == '1')? true : false;
+                    CAPIT = (line[1] == '1')? false : true;
                     TYPOS = (line[2] == '1')? true : false;
                 }
                 else {

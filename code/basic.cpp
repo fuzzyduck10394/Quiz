@@ -13,6 +13,7 @@ bool tnInput();                         // gets (t/n) input and returns true if 
 bool HasNr(string);                     // checks if a string contains a number
 bool TheSameChar(char, char, bool);     // arguments: first and second char, CAPIT
 void CheckExit(string, string, bool);   // check if 'e' was typed as an answer
+string LowerCase(string);               // sets all letters to lowercase 
                                     
 
 /***************************************************************************/
@@ -21,6 +22,7 @@ bool IsYes(string input) {return (input == "t" || input == "tak");}
 bool IsNo(string input) {return (input == "n" || input == "nie");}
 bool IsOZ(char a) {return (a == '1' || a == '0');}
 bool IsNr(char a) {return (a >= '0' && a <= '9');}
+bool IsBlank(char a) {return (a == ' ' || a == '\n' || a == '\t' || (int)a == 0);}
 bool IsLetter(char a) {return ((a >= 'a' && a <= 'z') || (a >= 'A' && a <= 'Z'));}
 
 
@@ -34,7 +36,7 @@ void SetToFalse(bool* start, int size) {for (bool* i = start; i < start + size; 
 string RawString(string s) {
     string res = "";
     for (int i=0; i<s.size(); i++) {
-        if (s[i]!=' ' && s[i]!='\n' && s[i]!='\t') res += s[i];
+        if (!IsBlank(s[i])) res += s[i];
     }
     return res;
 }
@@ -67,4 +69,14 @@ void CheckExit(string input, string answer="", bool BLANK = false) {
     }
     if (input != answer && input.size() == 1 && input[0] == 'e') exit(0);
 }
+
+string LowerCase(string s) {
+    string res = "";
+    for (auto i : s) {
+        if ((int)i >= 65 && (int)i <= 90) res += i + 32;
+        else res += i;
+    }
+    return res;
+} 
+
 

@@ -20,7 +20,7 @@ private:
     // algorithm.cpp
     void MixQs();                           // mixes qs's elements using rand()
     string AskQuestion(int);                // clears screen, asks question and returns an answer 
-    bool CheckAnswer(string, string);       // checks if the answer is correct
+    short CheckAnswer(string, string, bool);      // checks if the answer is correct, returns -1 if the correct answer has been shown
     void Round();                           // typical quiz's round
                                             
     
