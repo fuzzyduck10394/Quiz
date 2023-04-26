@@ -117,9 +117,7 @@ pair<string, string> ToQs(string s) {
         if (s[i] == '/' && s[i+1] == '/') break;
         else if (s[i] == '-' && !answer) answer = true;
         else if (!answer) res.first += s[i];
-        else if (answer) {
-            res.second += s[i];
-        }
+        else if (answer) res.second += s[i];
     }
 
     if (res.second == "" || res.first == "" || RawString(res.second).size() == 0) return {"", ""};
@@ -302,7 +300,7 @@ void quiz::BuildQue(string input) {
         if (input[i] == ' ' || i == input.size() - 1) {
             if (nr == "") continue;
             int nr_i = stoi(nr);
-            for (int i=beg_parts[nr_i]; i<beg_parts[nr_i+1] && i<beg_parts[beg_parts.size()-1]; i++) {
+            for (int i=beg_parts[nr_i-1]; i<beg_parts[nr_i] && i<beg_parts[beg_parts.size()-1]; i++) {
                 if (ActiveLine(GetExactLine(i))) {
                     pair<string, string> to_qs = ToQs(GetExactLine(i));
                     if (to_qs.first != "") qs.push_back(to_qs);

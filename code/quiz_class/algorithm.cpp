@@ -78,7 +78,6 @@ void quiz::MixQs() {
         int r = rand() % (qs.size()-i) + i;
         swap(qs[i], qs[r]);
     }
-    // for (auto i : qs) cout << i.first << endl;
 }
 
 unordered_set<string> DivideIntoWords(string s, bool CAPIT) {
@@ -185,6 +184,8 @@ string quiz::AskQuestion(int ind) {
 
     string question = qs[ind].first;
     if (question[0] == 'K' && question[1] == '/') question.erase(0,3);
+    while (IsBlank(question[0])) question.erase(0, 0); // TODO da sie to zrobic lepiej
+
     cout << question << '\n';
 
     string input;
