@@ -34,8 +34,10 @@ string SRC;                             // source.txt's content
 /************************************************************************************** constructor *******/
 
 quiz::quiz() {
+    MISTAKES = 1;
+
     BLANK = false;
-    CAPIT = true; // different than rest because tells if capitals ARE ALLOWED
+    CAPIT = false; // different than rest because tells if capitals ARE ALLOWED
     TYPOS = false;
     SCORE = 0;
 
@@ -110,6 +112,8 @@ bool CorrectInput(string s) {
 }
 
 pair<string, string> ToQs(string s) {
+    // TODO: bez znakow bialych na poczatku, zamiast " leszczynski" to "leszczynski"
+    // a po "K/" usun znaki biale: "K/ leszczysnki" -> "K/leszczynski"
     pair<string, string> res = {"", ""};
 
     bool answer = false;
@@ -219,7 +223,7 @@ void quiz::OpenFiles() {
             if (line.size() == 3 && IsNr(line[0]) && IsNr(line[1]) && IsNr(line[2])) {
                 if (IsOZ(line[0]) && IsOZ(line[1]) && IsOZ(line[2])) {
                     BLANK = (line[0] == '1')? true : false;
-                    CAPIT = (line[1] == '1')? false : true;
+                    CAPIT = (line[1] == '1')? true : false;
                     TYPOS = (line[2] == '1')? true : false;
                 }
                 else {

@@ -9,6 +9,7 @@ private:
     bool BLANK;                             // if blank chars matter in answers
     bool CAPIT;                             // if capital letters matter in answers
     bool TYPOS;                             // if typos ALWAYS aren't allowed in answers (they aren't allowed only in answers with numbers by default)
+    int MISTAKES;                           // if typos is set to false; maximum number of mistakes in an answer
 
     vector<pair<string, string>> qs;        // question set
     int SCORE;                              // 

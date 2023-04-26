@@ -1,8 +1,11 @@
 #include <iostream>
 #include <random>
 #include <time.h>
+
 #include <stack>
-#include <unordered_set>
+#include <vector>
+#include <queue>
+
 #include "quiz_class.h"
 using namespace std;
 
@@ -14,7 +17,6 @@ bool IsNo(string);
 bool tnInput();
 bool IsLetter(char);
 bool IsBlank(char);
-bool TheSameChar(char, char, bool);
 string RawString(string);
 void SetToFalse(bool*, int);
 bool HasNr(string);
@@ -22,11 +24,11 @@ void CheckExit(string, string, bool);
 string LowerCase(string);
 
 // for main functions
-void AssignPq(int);                                   // assignes pq with i*{i, 0} for i in {0, arg}
+inline void AssignPq(int);                            // assignes pq with i*{i, 0} for i in {0, arg}
 void PrintPq();
-unordered_set<string> DivideIntoWords(string);        // returns a vector of words and it's size
-bool isK(string);                                     // checks if there are "K/" in the line
-unordered_set<string> DivideIntoWords(string, bool);  // divides into words by ','
+bool IsK(string);                                     // checks if there are "K/" in the line
+vector<string> DivideIntoWords(string, bool);         // divides into words by ','
+bool TheSameString(string, string, bool, bool, bool, int); // for the CheckAnswer()
 
 // class
 // private:
@@ -45,16 +47,17 @@ struct comp {
                     const pair<int, unsigned int>& p2) const
     { return p1.second > p2.second; }
 };
-// sorts from the smallest to the biggest value by the second variable; allows duplications
+// sorts from the smallest to the highest value by the second variable; allows duplications
 priority_queue<pair<int, unsigned int>, vector<pair<int, unsigned int>>, comp> pq;
 
 
 
-/***************************************************************************************** for main *******/
 
-void AssignPq(int size) {for (int i=0; i<size; i++) pq.push({i, 0});}
 
-// DEBUG function
+
+/************************************************************************************************/
+
+// DEBUG 
 void PrintPq() {
 
     priority_queue<pair<int, unsigned int>, vector<pair<int, unsigned int>>, comp> pq1;
@@ -69,9 +72,50 @@ void PrintPq() {
     cin.get();
 }
 
-/**************************************************************************************** class ***********/
 
-/*** private ***/
+inline void AssignPq(int size) {for (int i=0; i<size; i++) pq.push({i, 0});}
+
+void quiz::StartQuiz() {
+    MixQs();
+
+    for (int i=0; i<qs.size(); i++) {
+        string answer = AskQuestion(i);
+        short correct = CheckAnswer(answer, qs[i].second, IsK(qs[i].first));
+        if (correct == 1) {
+            SCORE++;
+            if (SCORE == qs.size()) {
+                cout << "\nBrawo! Odpowiedziałeś dobrze na wszystkie pytania za pierwszym razem.\n"
+                        "Czy chcesz kontynuować? (t/n)\n";
+
+                bool tn_answer = tnInput();
+                if (tn_answer) {
+                    AssignPq(qs.size());
+                    break;
+                }
+                else exit(0);
+            }
+        }
+        else {
+            SCORE--;
+            pq.push({i, 0}); 
+
+            string correct_answer = qs[i].second;
+            if (correct!=-1) cout << correct_answer << '\n';
+            string cinget;
+            getline(cin, cinget);
+
+            // '.' tells that the answer was correct; undo
+            if (cinget.size() == 1 && cinget[0] == '.') {
+                SCORE++;
+                pq.pop();
+            }
+        }
+    }
+
+    Round();
+}
+
+
 void quiz::MixQs() {
     srand(time(NULL));
     for (int i=0; i<qs.size()-2; i++) {
@@ -80,61 +124,107 @@ void quiz::MixQs() {
     }
 }
 
-unordered_set<string> DivideIntoWords(string s, bool CAPIT) {
-    // TODO: typos
-    unordered_set<string> res;
+vector<string> DivideIntoWords(string s) {
+    vector<string> res;
     string word = "";
 
-    if (CAPIT) s = LowerCase(s);
     for (int i=0; i<s.size(); i++) {
         if ((s[i] == ',') && RawString(word).size() != 0) {
-            res.insert(word);
+            res.push_back(word);
             word = "";
+            if (IsBlank(s[i+1])) i+=2;
         }
         if (i == s.size() -1 && RawString(word).size() != 0) {
             word += s[i];
-            res.insert(word);
+            res.push_back(word);
             word = "";
         }
-        if (!IsBlank(s[i]) && s[i] != ',') word += s[i];
+        if (s[i] != ',') word += s[i];
     }
-    res.insert("end");
+
     return res;
 }
+
+bool TheSameString(string a, string c, bool blank, bool capit, bool typos, int mistakes_max) {
+    // bad length
+    if (!typos && a.size() != c.size()) return false;
+    else if (a.size() + mistakes_max < c.size() || a.size() - mistakes_max > c.size()) return false;
+
+    if (!blank) {
+        a = RawString(a);
+        c = RawString(c);
+    }
+    if (!capit) {
+        a = LowerCase(a);
+        c = LowerCase(c);
+    }
+
+    if (!typos) return (a == c);
+    else {
+        int mistakes = 0;
+
+        for (int i=0; i<a.size(); i++) {
+            if (a[i] != c[i]) {
+                if (i>0 && a[i-1] == c[i]) continue;
+                else if (i<a.size()-1 && a[i+1] == c[i]) continue;
+                else mistakes++;
+            }
+        }
+
+        if (mistakes > mistakes_max) return false;
+    }
+
+    return true;
+}
+
                         // answer, correct
 short quiz::CheckAnswer(string a, string c, bool isK = false) {
+    // don't able to do typos when answering the date
+    const bool typos_allowed = (TYPOS == false && !HasNr(a) && a.size() > 5);
+
     // wymienianie odpowiedzi - mozliwa jest dowolna kolejnosc
     if (isK) {
-        // TODO: wypisywanie poprawnych odpowiedzi w odwrotnej kolejnosci
-        unordered_set<string> a_div = DivideIntoWords(a, CAPIT);
-        unordered_set<string> c_div = DivideIntoWords(c, CAPIT);
-
-        // uwaga, naiwne rozwiazanie. TODO
-        unordered_set<string> UC_a_div = DivideIntoWords(a, false);
-        unordered_set<string> UC_c_div = DivideIntoWords(c, false);
+        vector<string> a_div = DivideIntoWords(a);
+        vector<string> c_div = DivideIntoWords(c);
 
         vector<string> not_correct, not_present;
+        bool* present = new bool[c_div.size()];
+        SetToFalse(present, c_div.size());
 
-        for (auto i : c_div) {
-            if (i == "end") continue;
-            else if (a_div.find(i) == a_div.end()) not_present.push_back(i);
+        for (int i=0; i<a_div.size(); i++) {
+            bool cor = false;
+
+            for (int j=0; j<c_div.size(); j++) {
+                if (TheSameString(a_div[i], c_div[j], BLANK, CAPIT, typos_allowed, MISTAKES)) {
+                    present[j] = true;
+                    cor = true;
+                    break;
+                }
+            }
+
+            if (!cor) not_correct.push_back(c_div[i]);
         }
         
-        for (auto i : a_div) {
-            if (i == "end") continue;
-            else if (c_div.find(i) == c_div.end()) not_correct.push_back(i);
+        for (int i=0; i<c_div.size(); i++) {
+            if (!present[i]) not_present.push_back(c_div[i]);
         }
 
+        delete[] present;
+
+
         if (not_present.size() == c_div.size()) return false;
-        else if (not_present.size() != 0 || not_correct.size() != 0){
-            cout << "\nBrakuje: ";
-            if (not_present.size() != 0) {
+        
+        else if (!not_present.empty() || !not_correct.empty()){
+
+            if (!not_present.empty()) {
+                cout << "\nBrakuje: ";
                 for (int i=0; i<not_present.size(); i++) {
                     cout << not_present[i];
                     if (i != not_present.size() - 1) cout << ", ";
                 }
             }
-            if (not_correct.size() != 0) {
+
+            if (!not_correct.empty()) {
                 cout << "\nŹle:\t ";
                 for (int i=0; i<not_correct.size(); i++) {
                     cout << not_correct[i];
@@ -145,6 +235,7 @@ short quiz::CheckAnswer(string a, string c, bool isK = false) {
 
             return -1;
         }
+
         else return true;
     }
 
@@ -153,29 +244,7 @@ short quiz::CheckAnswer(string a, string c, bool isK = false) {
         c = RawString(c);
     }
 
-    // don't able to do typos when answering the date
-    const bool typos_allowed = (TYPOS == false && !HasNr(a) && a.size() > 5);
-
-    int mistakes = 0, mistakes_max = 1;
-
-    // bad length - something missing or something is too much
-    if (!typos_allowed && a.size() != c.size()) return false;
-    else if (a.size() + mistakes_max < c.size() || a.size() - mistakes_max > c.size()) return false;
-
-    for (int i=0; i<a.size(); i++) {
-        if (!TheSameChar(a[i], c[i], CAPIT)) {
-            if (typos_allowed) {
-                if (i>0 && TheSameChar(a[i-1], c[i], CAPIT)) continue;
-                else if (i<a.size()-1 && TheSameChar(a[i+1], c[i], CAPIT)) continue;
-                else mistakes++;
-            }
-            else return false;
-        }
-
-        if (mistakes > mistakes_max) return false;
-    }
-
-    return true;
+    return (TheSameString(a, c, BLANK, CAPIT, typos_allowed, MISTAKES)); 
 }
 
 string quiz::AskQuestion(int ind) {
@@ -184,7 +253,6 @@ string quiz::AskQuestion(int ind) {
 
     string question = qs[ind].first;
     if (question[0] == 'K' && question[1] == '/') question.erase(0,3);
-    while (IsBlank(question[0])) question.erase(0, 0); // TODO da sie to zrobic lepiej
 
     cout << question << '\n';
 
@@ -196,7 +264,7 @@ string quiz::AskQuestion(int ind) {
     return input;
 }
 
-bool isK(string question) {
+bool IsK(string question) {
     question = RawString(question);
     if (question.size() >= 2 && question[0] == 'K' && question[1] == '/') return true;
     else return false;
@@ -221,7 +289,7 @@ void quiz::Round() {
             exit(0);
         }
 
-        while (in_lastf[pq.top().first]) {
+        while (in_lastf[pq.top().first]) { //?????????????? TODO
             st.push(pq.top());
             pq.pop();
         }
@@ -229,8 +297,8 @@ void quiz::Round() {
         pq.pop();
 
         string answer = AskQuestion(curr.first);
-        string corr_ans = qs[curr.first].first;
-        short correct = CheckAnswer(answer, qs[curr.first].second, isK(corr_ans));
+        string corr_ans = qs[curr.first].first; //?///////??????//
+        short correct = CheckAnswer(answer, qs[curr.first].second, IsK(qs[curr.first].first));
 
         if (lastf.size() >= F) {
             in_lastf[lastf.front()] = false;
@@ -244,11 +312,9 @@ void quiz::Round() {
             curr.second += priority_v++;
         }
         else {
-            // TODO: maybe some updates for a priority of a question which isn't asked correctly?...
             SCORE--;
             
             string correct_answer = qs[curr.first].second;
-            // TODO: cout bez poczatkowych spacji czyli np zamiast " leszczynski" to "leszczynski"
             if (correct != -1) cout << correct_answer << '\n';
             string cinget;
             getline(cin, cinget);
@@ -266,47 +332,5 @@ void quiz::Round() {
             st.pop();
         }
     }
-}
-
-
-/*** public ***/
-void quiz::StartQuiz() {
-    MixQs();
-
-    for (int i=0; i<qs.size(); i++) {
-        string answer = AskQuestion(i);
-        short correct = CheckAnswer(answer, qs[i].second, isK(qs[i].first));
-        if (correct == 1) {
-            SCORE++;
-            if (SCORE == qs.size()) {
-                cout << "\nBrawo! Odpowiedziałeś dobrze na wszystkie pytania za pierwszym razem.\n"
-                        "Czy chcesz kontynuować? (t/n)\n";
-
-                bool tn_answer = tnInput();
-                if (tn_answer) {
-                    AssignPq(qs.size());
-                    break;
-                }
-                else exit(0);
-            }
-        }
-        else {
-            SCORE--;
-            pq.push({i, 0}); 
-
-            string correct_answer = qs[i].second;
-            if (correct != -1) cout << correct_answer << '\n';
-            string cinget;
-            getline(cin, cinget);
-
-            // '.' tells that the answer was correct; undo
-            if (cinget.size() == 1 && cinget[0] == '.') {
-                SCORE++;
-                pq.pop();
-            }
-        }
-    }
-
-    Round();
 }
 
