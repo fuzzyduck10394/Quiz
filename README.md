@@ -1,7 +1,8 @@
 # Quiz
 ## 1. Jak włączyć program?
 Aby włączyć program, w terminalu w katalogu `quiz` należy wpisać następującą komendę: 
->g++ code/'*'.cpp code/quiz_class/'*'.cpp -o quiz.out && ./quiz.out    
+>g++ code/*.cpp code/quiz_class/
+>*.cpp -o quiz.out && ./quiz.out    
 
 ## 2. Jak stworzyć swój własny zestaw pytań?
 W pliku z zestawami pytań muszą być zamieszczone pytania i odpowiedzi w formacie:
