@@ -1,7 +1,7 @@
 # Quiz
 ## 1. Jak włączyć program?
 Aby włączyć program, w terminalu w katalogu `quiz` należy wpisać następującą komendę: 
->g++ code/main.cpp code/quiz_class/algorithm.cpp code/quiz_class/build.cpp code/basic.cpp -o quiz.out && ./quiz.out
+>g++ code/'*'.cpp code/quiz_class/'*'.cpp -o quiz.out && ./quiz.out    
 
 ## 2. Jak stworzyć swój własny zestaw pytań?
 W pliku z zestawami pytań muszą być zamieszczone pytania i odpowiedzi w formacie:
@@ -42,7 +42,7 @@ Ten rodzaj literówki w przypadku określeniu wartości logicznej na fałsz jest
 
 Ten rodzaj literówki jest domyślnie dozwolony jedynie jeden raz w całej odpowiedzi na pytanie.
 
-Niezależnie od podanych wartości logicznych w pliku z pytaniami, program nigdy nie zezwala na popełnianie literówek w odpowiedziach, w których znajduje się liczba (np. w datach).
+ Niezależnie od podanych wartości logicznych w pliku z pytaniami, program nigdy nie zezwala na popełnianie literówek w odpowiedziach, w których znajduje się liczba (np. w datach).
 
 ## 3. Dodatkowe informacje
 - Program działa tylko na urządzeniach z systemem Linux.
