@@ -10,7 +10,7 @@ W pliku z zestawami pytań muszą być zamieszczone pytania i odpowiedzi w forma
 Aby wstawić komentarz, należy umieścić poprzedzający go znak `//`. 
 >Ile żołądków mają delfiny? -2  *//Tu jest komentarz!*
 
-Aby stworyć odpowiedź, która składa się z wielu słów w obojętnej kolejności, na początku linii należy umieścić '/K'.
+Aby stworyć odpowiedź, która składa się z wielu słów w obojętnej kolejności, na początku linii należy umieścić `/K`.
 >K/ Ile żołądków mają delfiny? -2, 3, 4
 
 Po stworzeniu pliku z zestawem pytań, należy umieścić go w katalogu `quiz` oraz wpisać jego nazwę do pliku `source.txt`.
