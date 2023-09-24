@@ -10,6 +10,9 @@ W pliku z zestawami pytań muszą być zamieszczone pytania i odpowiedzi w forma
 Aby wstawić komentarz, należy umieścić poprzedzający go znak `//`. 
 >Ile żołądków mają delfiny? -2  *//Tu jest komentarz!*
 
+Aby stworyć odpowiedź, która składa się z wielu słów w obojętnej kolejności, na początku linii należy umieścić '/K'.
+>K/ Ile żołądków mają delfiny? -2, 3, 4
+
 Po stworzeniu pliku z zestawem pytań, należy umieścić go w katalogu `quiz` oraz wpisać jego nazwę do pliku `source.txt`.
 
 ## 3. Personalizacja 
@@ -37,11 +40,10 @@ Ten rodzaj literówki w przypadku określeniu wartości logicznej na fałsz jest
 -  znak występuje w szablonie w zupełnie innym miejscu lub w ogóle w nim nie występuje, np.:
 >odpowxedź
 
-Ten rodzaj literówki w przypadku określenia wartości logicznej na fałsz jest dozwolony jedynie jeden raz w całej odpowiedzi na pytanie.
-
+Ten rodzaj literówki jest domyślnie dozwolony jedynie jeden raz w całej odpowiedzi na pytanie.
+Niezależnie od podanych wartości logicznych w pliku z pytaniami, program nigdy nie zezwala na popełnianie literówek w odpowiedziach, w których znajduje się liczba (np. w datach).
 
 ## 3. Dodatkowe informacje
 - Program działa tylko na urządzeniach z systemem Linux.
 - W przypadku pomyłki, wpisanie znaku `.` anuluje utratę punktów.
 - Aby wyjść z programu, w odpowiedzi na pytanie należy wpisać `e` (exit).
-- Niezależnie od podanych wartości logicznych w pliku z pytaniami, program nigdy nie zezwala na popełnianie literówek w odpowiedziach, w których znajduje się liczba (np. w datach).
