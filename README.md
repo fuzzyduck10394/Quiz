@@ -41,6 +41,7 @@ Ten rodzaj literówki w przypadku określeniu wartości logicznej na fałsz jest
 >odpowxedź
 
 Ten rodzaj literówki jest domyślnie dozwolony jedynie jeden raz w całej odpowiedzi na pytanie.
+
 Niezależnie od podanych wartości logicznych w pliku z pytaniami, program nigdy nie zezwala na popełnianie literówek w odpowiedziach, w których znajduje się liczba (np. w datach).
 
 ## 3. Dodatkowe informacje
