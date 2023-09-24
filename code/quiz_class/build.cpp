@@ -80,6 +80,8 @@ bool ActiveLine(string line) {
 /***************************************************************************************** for main *******/
 
 bool CorrectInput(string s) {
+    const int amm_parts = Q/10 + 1;
+
     string sraw = RawString(s);
     if (sraw.size() == 0) return false;
     if (sraw[0] == 'w' && sraw.size() == 1) return true; 
@@ -87,14 +89,14 @@ bool CorrectInput(string s) {
     // 'e' == end of the program
     else if (sraw[0] == 'e' && sraw.size() == 1) exit(0);
 
-    bool* used = new bool[Q+1];
-    SetToFalse(used, Q+1);
+    bool* used = new bool[amm_parts+1];
+    SetToFalse(used, amm_parts+1);
     s += ' '; // triggers end of a number at the end of input
     string nr = "";
     for (int i=0; i<s.size(); i++) {
         if (s[i] == ' ') {
             if (nr == "" || (nr.size() == 1 && (int)nr[0] == 0)) continue;
-            else if (stoi(nr) > Q || used[stoi(nr)]) {
+            else if (stoi(nr) > amm_parts || used[stoi(nr)]) {
                 delete[] used;
                 return false;
             }
@@ -112,8 +114,6 @@ bool CorrectInput(string s) {
 }
 
 pair<string, string> ToQs(string s) {
-    // TODO: bez znakow bialych na poczatku, zamiast " leszczynski" to "leszczynski"
-    // a po "K/" usun znaki biale: "K/ leszczysnki" -> "K/leszczynski"
     pair<string, string> res = {"", ""};
 
     bool answer = false;
@@ -255,18 +255,18 @@ void quiz::AskParts() {
     if (P_SIZE == 1) {
         const int Q_SIZE = parts[0];
         if (Q_SIZE == 1) {
-            cout << "W pliku znajduje się za mało pytań.\n";
+            cout << "W pliku znajduje się tylko jedno pytanie.\n";
             exit(0);
         }
 
         cout << "Quiz nie został podzielony na części. "; 
         if (Q_SIZE > 1 && Q_SIZE <= 4) cout << "Są " << Q_SIZE << " pytania.\n";
         else if (Q_SIZE >= 5 && Q_SIZE <= 21) cout << "Jest " << Q_SIZE << " pytań.\n";
-        // SĄ 22 pytania, lecz wielkość jednej partii to maksymalnie 15 pytań
 
         cout << "Zaczynamy?\n";
         string cinget;
         getline(cin, cinget);
+        input = "1";
 
         if (RawString(cinget).size() == 1 && (cinget[0] == 'e' || cinget[0] == 'n') || RawString(cinget) == "nie") exit(0);
     }
@@ -314,5 +314,8 @@ void quiz::BuildQue(string input) {
         }
         else nr += input[i];
     }
+
+    /* for (auto i:qs) cout << i.first << '\n' << i.second << "\n\n";
+    cin.get(); */
 }
 

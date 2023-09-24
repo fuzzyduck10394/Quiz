@@ -1,7 +1,0 @@
-0 0 0
-// zwróć uwagę na: znaki białe, wielkie litery, literówki (1 == prawda, 0 == fałsz)
-pyt1    -odp1
-pyt2    -odp2
-pyt3    -odp3 // Tutaj jest komentarz!
-pyt4    -odp4
-pyt5    -odp5

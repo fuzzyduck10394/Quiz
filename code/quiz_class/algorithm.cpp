@@ -97,7 +97,6 @@ void quiz::StartQuiz() {
         }
         else {
             SCORE--;
-            pq.push({i, 0}); 
 
             string correct_answer = qs[i].second;
             if (correct!=-1) cout << correct_answer << '\n';
@@ -107,10 +106,15 @@ void quiz::StartQuiz() {
             // '.' tells that the answer was correct; undo
             if (cinget.size() == 1 && cinget[0] == '.') {
                 SCORE++;
-                pq.pop();
+                continue;
             }
+
+            pq.push({i, 0}); 
         }
     }
+
+    cout << "Już wszystkie pytania były zadane przynajmniej raz.\n";
+    cin.get();
 
     Round();
 }
@@ -129,17 +133,21 @@ vector<string> DivideIntoWords(string s) {
     string word = "";
 
     for (int i=0; i<s.size(); i++) {
+        // next word
         if ((s[i] == ',') && RawString(word).size() != 0) {
             res.push_back(word);
             word = "";
-            if (IsBlank(s[i+1])) i+=2;
+            if (IsBlank(s[i+1])) i+=1;
+            continue;
         }
+
+        if (s[i] != ',') word += s[i];
+
+        // last word
         if (i == s.size() -1 && RawString(word).size() != 0) {
-            word += s[i];
             res.push_back(word);
             word = "";
         }
-        if (s[i] != ',') word += s[i];
     }
 
     return res;
@@ -163,7 +171,7 @@ bool TheSameString(string a, string c, bool blank, bool capit, bool typos, int m
     else {
         int mistakes = 0;
 
-        for (int i=0; i<a.size(); i++) {
+        for (int i=0; i<min(a.size(), c.size()); i++) { // TODO: may not working properly. Add a better typos detect algorithm
             if (a[i] != c[i]) {
                 if (i>0 && a[i-1] == c[i]) continue;
                 else if (i<a.size()-1 && a[i+1] == c[i]) continue;
@@ -179,10 +187,10 @@ bool TheSameString(string a, string c, bool blank, bool capit, bool typos, int m
 
                         // answer, correct
 short quiz::CheckAnswer(string a, string c, bool isK = false) {
-    // don't able to do typos when answering the date
+    // don't allow to do typos when answering a date
     const bool typos_allowed = (TYPOS == false && !HasNr(a) && a.size() > 5);
 
-    // wymienianie odpowiedzi - mozliwa jest dowolna kolejnosc
+    // "K/" mode
     if (isK) {
         vector<string> a_div = DivideIntoWords(a);
         vector<string> c_div = DivideIntoWords(c);
@@ -195,14 +203,14 @@ short quiz::CheckAnswer(string a, string c, bool isK = false) {
             bool cor = false;
 
             for (int j=0; j<c_div.size(); j++) {
-                if (TheSameString(a_div[i], c_div[j], BLANK, CAPIT, typos_allowed, MISTAKES)) {
+                if (!present[j] && TheSameString(a_div[i], c_div[j], BLANK, CAPIT, typos_allowed, MISTAKES)) {
                     present[j] = true;
                     cor = true;
                     break;
                 }
             }
 
-            if (!cor) not_correct.push_back(c_div[i]);
+            if (!cor) not_correct.push_back(a_div[i]);
         }
         
         for (int i=0; i<c_div.size(); i++) {
@@ -211,8 +219,7 @@ short quiz::CheckAnswer(string a, string c, bool isK = false) {
 
         delete[] present;
 
-
-        if (not_present.size() == c_div.size()) return false;
+        if (not_present.size() == c_div.size()) return 0;
         
         else if (!not_present.empty() || !not_correct.empty()){
 
@@ -222,10 +229,11 @@ short quiz::CheckAnswer(string a, string c, bool isK = false) {
                     cout << not_present[i];
                     if (i != not_present.size() - 1) cout << ", ";
                 }
+                cout << '\n'; // may 01
             }
 
             if (!not_correct.empty()) {
-                cout << "\nŹle:\t ";
+                cout << "Źle:\t ";
                 for (int i=0; i<not_correct.size(); i++) {
                     cout << not_correct[i];
                     if (i != not_correct.size() - 1) cout << ", ";
@@ -236,9 +244,10 @@ short quiz::CheckAnswer(string a, string c, bool isK = false) {
             return -1;
         }
 
-        else return true;
+        else return 1;
     }
-
+    
+    // without "K/"
     else if (BLANK == false) {
         a = RawString(a);
         c = RawString(c);
@@ -253,13 +262,13 @@ string quiz::AskQuestion(int ind) {
 
     string question = qs[ind].first;
     if (question[0] == 'K' && question[1] == '/') question.erase(0,3);
+    while (IsBlank(question[0])) question.erase(0, 0); // may 01
 
     cout << question << '\n';
 
     string input;
     getline(cin, input);
     CheckExit(input, qs[ind].second, BLANK);
-
 
     return input;
 }
@@ -272,7 +281,7 @@ bool IsK(string question) {
 
 void quiz::Round() {
     const int QS_SIZE = qs.size();                      
-    const int F = max(int(0.2 * (double)QS_SIZE), 1);   // a question can't be asked if it was asked in F (20% of number of questions) rounds
+    const int F = max(int(0.2 * double(QS_SIZE + 1)), 1);   // a question can't be asked if it was asked in F (20% of number of questions) rounds
 
     queue<int> lastf;                                   
     bool in_lastf[QS_SIZE];                             
@@ -283,13 +292,8 @@ void quiz::Round() {
     unsigned /*long long*/ int priority_v = 1;          
                                                 
     while (1) {
-        // shouldn't be triggered
-        if (pq.empty()) {
-            cout << "Błąd kolejki.\n";
-            exit(0);
-        }
-
-        while (in_lastf[pq.top().first]) { //?????????????? TODO
+        // find using <stack> an element which isnt in lastf 
+        while (in_lastf[pq.top().first] && pq.size() > 1) { 
             st.push(pq.top());
             pq.pop();
         }
@@ -297,13 +301,13 @@ void quiz::Round() {
         pq.pop();
 
         string answer = AskQuestion(curr.first);
-        string corr_ans = qs[curr.first].first; //?///////??????//
         short correct = CheckAnswer(answer, qs[curr.first].second, IsK(qs[curr.first].first));
 
-        if (lastf.size() >= F) {
+        if (lastf.size() > F) {
             in_lastf[lastf.front()] = false;
             lastf.pop();
         }
+
         in_lastf[curr.first] = true;
         lastf.push(curr.first);
         
@@ -315,12 +319,15 @@ void quiz::Round() {
             SCORE--;
             
             string correct_answer = qs[curr.first].second;
-            if (correct != -1) cout << correct_answer << '\n';
+
+            if (answer.size()) cout << '\n';
+            if (correct == 0) cout << correct_answer << '\n';
+
             string cinget;
             getline(cin, cinget);
             
             // '.' tells that the answer was correct; undo
-            if (cinget.size() == 1 && cinget[0] == '.') {
+            if (RawString(cinget)[0] == '.') {
                 SCORE++;
                 curr.second += priority_v++;
             }
